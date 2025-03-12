@@ -10,6 +10,7 @@ app.get('/',(request, response)=>{
     return response.status(234).send("Hello Senal");
 });
 
+// create book db?
 app.post('/books',async(request, response)=>{
     try{
         if(
@@ -35,6 +36,22 @@ app.post('/books',async(request, response)=>{
     }
 });
 
+//get book by id?
+app.post('/books/:id',async(request, response)=>{
+    try{
+        const {id} = request.params;
+        const books = await Book.findByID({});
+
+        return response.status(200).json({
+            count : books.length,
+            data : books
+        });
+        return response.status(200).send(book);
+    }catch (error){
+        console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+});
 
 app.listen(PORT, ()=>{
     console.log(`APP is listening to port: ${PORT}`);
@@ -53,6 +70,44 @@ app.get('/books',async (request, response)=>{
     }
 });
 
+//update book
+app.put('./books/:id',async (request, response)=>{
+    try{
+        if(
+            !request.body.title ||
+            !request.body.author ||
+            !request.body.publishYear
+        ){
+            return response.status(400).send({
+                message: 'Send all requred fields',
+            });
+        }
+        const {id} = request.params;
+        const result = await Book.findByIdAndUpdate(id,request.body);
+        if(!result){
+            return response.status(404).json({message: 'Book not found'});
+        }
+        return response.status(200).send({message: 'Book updated successfully'});
+    }catch (error){
+        console.log(error.message);
+        response.status(500).send({ message : error.message});
+    }
+});
+
+//delete book
+app.delete('./books/:id',async (request, response)=>{
+    try{
+        const {id} = request.params;
+        const result = await Book.findByIdAndUpdate(id,request.body);
+        if(!result){
+            return response.status(404).json({message: 'Book not found'});
+        }
+        return response.status(200).send({message: 'Book deleted successfully'});
+    }catch (error){
+        console.log(error.message);
+        response.status(500).send({ message : error.message});
+    }
+});
 mongoose
     .connect(mongoDBURL)
     .then(()=>{
