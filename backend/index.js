@@ -11,6 +11,12 @@ app.get('/',(request, response)=>{
     return response.status(234).send("Hello Senal");
 });
 
+app.use(cors());
+  //      origin: 'http://localhost:5555',
+  //      methods: ['GET','POST','PUT','DELETE'],
+   //     allowedHeaders: ['Content-Type'],
+  //  })
+//);
 app.use('/books', booksRoute);
 mongoose
     .connect(mongoDBURL)
